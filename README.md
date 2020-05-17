@@ -21,40 +21,42 @@ To use the library, start by creating an instance of the `LogFile` class. Then c
 ```cs
 LogFile logFile = new LogFile(path);
 
+// Log entries with different importance, or 'levels'
 logFile.LogInfo("An information-level log entry");
 logFile.LogWarning("A warning-level log entry");
 logFile.LogError("An error-level log entry");
 logFile.LogCritical("A critical-level log entry");
 
+// A divider helps separate groups of log entries
 logFile.LogDivider();
 
-Exception ex = new ArgumentNullException("parameterName");
-logFile.LogError("This parameter is required", ex);
+// You can log multiple objects
+logFile.LogError("An error-level log entry", 12345, 'n', "Error");
 
-logFile.LogDivider();
+// Exception objects have special handling. LogFile properties control whether inner exceptions
+// are written, and whether the name of the exception type includes the namespace.
+logFile.LogError("This parameter is required", new ArgumentNullException("parameterName"));
 
+// And you can log formatted entries
 logFile.LogErrorFormat("Expected {0} items, but found {1} items", 25, 26);
 ```
 
 The code above would produce the following log entries.
 
 ```
-[5/16/2020 5:56:54 PM][INFO] An information-level log entry : 123
-[5/16/2020 5:56:54 PM][WARNING] A warning-level log entry : 123.4
+[5/16/2020 5:56:54 PM][INFO] An information-level log entry
+[5/16/2020 5:56:54 PM][WARNING] A warning-level log entry
 [5/16/2020 5:56:54 PM][ERROR] An error-level log entry
 [5/16/2020 5:56:54 PM][CRITICAL] A critical-level log entry
 -------------------------------------------------------------------------------
+[5/16/2020 5:56:54 PM][ERROR] An error-level log entry : 12345 : n : Error
 [5/16/2020 5:56:54 PM][ERROR] This parameter is required : ArgumentNullException: Value cannot be null. (Parameter 'parameterName')
--------------------------------------------------------------------------------
 [5/16/2020 5:56:54 PM][ERROR] Expected 25 items, but found 26 items
-
 ```
 
 ## Log Levels
 
-The `LogFile` class provides the `LogInfo()`, `LogWarning()`, `LogError()`, and `LogCritical()` methods for creating log entries. There is also a format version of each method.
-
-The method you choose determines the log entry importance, or *level*. The `LogLevel` property of the `LogFile` class can also be set. Only log entries with the same level or higher will be written to the log file. If the `LogLevel` property of the `LogFile` class is set to `LogLevel.None`, no log entries will be entered and logging is effectively disabled.
+Each of the log methods shown in the previous example specifies the log entry importance, or *level*. The `LogFile` class also has a `LogLevel` property. This allows you to easily filter out lower level log entries. If the log entry's level is not equal to or higher than the `LogFile`'s `LogLevel` property, the entry will not be written to the log file. If the `LogLevel` property of the `LogFile` class is set to `LogLevel.None`, no log entries will be written and logging is effectively disabled.
 
 ```cs
 logFile.LogLevel = LogLevel.Warning;
@@ -71,10 +73,12 @@ logFile.LogLevel = LogLevel.None;
 logFile.LogCritical("This is an error-level entry");
 ```
 
-In addition to the methods mentioned above, you can also use the `Log()` method. This method takes a `LogLevel` argument. This version requires a little more typing.
+In addition to the methods mentioned above, you can also use the `Log()` method. This method takes a `LogLevel` argument, and requires a little more typing.
 
 ```cs
-logFile.Log(LogLevel.Info, "This is an information-level entry");
+// These two lines are equivalent
+logFile.LogError("An error-level log entry");
+logFile.Log(LogLevel.Error, "An error-level log entry");
 ```
 
 ## Exceptions
