@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftCircuits.SimpleLogFile", "SoftCircuits.SimpleLogFile\SoftCircuits.SimpleLogFile.csproj", "{B0C11A2D-3790-4EBD-9731-32CD421A1616}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogFile.Tests", "LogFile.Tests\LogFile.Tests.csproj", "{AB4DA528-45EC-436D-A402-0BFFAE9ABA8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0C11A2D-3790-4EBD-9731-32CD421A1616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0C11A2D-3790-4EBD-9731-32CD421A1616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0C11A2D-3790-4EBD-9731-32CD421A1616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0C11A2D-3790-4EBD-9731-32CD421A1616}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB4DA528-45EC-436D-A402-0BFFAE9ABA8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB4DA528-45EC-436D-A402-0BFFAE9ABA8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB4DA528-45EC-436D-A402-0BFFAE9ABA8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB4DA528-45EC-436D-A402-0BFFAE9ABA8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90A5A331-419D-4447-82CA-89765F77E0B5}
+	EndGlobalSection
+EndGlobal
