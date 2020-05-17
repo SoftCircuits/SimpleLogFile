@@ -24,16 +24,23 @@ namespace SoftCircuits.SimpleLogFile
         public string Filename { get; set; }
 
         /// <summary>
-        /// Gets or sets which log entries are written to the log file. Log entries with the
+        /// Gets or sets which log entries are written to the log file. Only entries with the
         /// specified level or higher will be written.
         /// </summary>
         public LogLevel LogLevel { get; set; }
 
         /// <summary>
         /// Gets or sets whether the log methods that accept an <see cref="Exception"/> argument
-        /// also log all the inner exceptions.
+        /// also log all the inner exceptions. Otherwise, only the outer most exception is
+        /// logged.
         /// </summary>
         public bool LogInnerExceptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the full exception name is displayed when formatting exceptions.
+        /// Otherwise, only the exception's class name is displayed (without the namespace).
+        /// </summary>
+        public bool ShowExceptionClassFullName { get; set; }
 
         /// <summary>
         /// Constructs a new <see cref="LogFile"/> instance.
@@ -50,6 +57,7 @@ namespace SoftCircuits.SimpleLogFile
             Filename = filename;
             LogLevel = logLevel;
             LogInnerExceptions = logInnerExceptions;
+            ShowExceptionClassFullName = false;
         }
 
         /// <summary>
@@ -230,7 +238,9 @@ namespace SoftCircuits.SimpleLogFile
         {
             if (ex == null)
                 return NullException;
-            return $"{ex.GetType().FullName}: {ex.Message}";
+            Type type = ex.GetType();
+            string exceptionName = ShowExceptionClassFullName ? type.FullName : type.Name;
+            return $"{exceptionName}: {ex.Message}";
         }
 
         #endregion
