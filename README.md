@@ -33,15 +33,16 @@ logFile.LogDivider();
 // You can log multiple objects
 logFile.LogError("An error-level log entry", 12345, 'n', "Error");
 
-// Exception objects have special handling. LogFile properties control whether inner exceptions
-// are written, and whether the name of the exception type includes the namespace.
+// The library has special handling for formatting exceptions. LogFile properties control
+// whether inner exceptions are written, and whether the name of the exception type
+// includes the namespace.
 logFile.LogError("This parameter is required", new ArgumentNullException("parameterName"));
 
 // And you can log formatted entries
 logFile.LogErrorFormat("Expected {0} items, but found {1} items", 25, 26);
 ```
 
-The code above would produce the following log entries.
+The code above produces the following log entries.
 
 ```
 [5/16/2020 5:56:54 PM][INFO] An information-level log entry
@@ -56,7 +57,9 @@ The code above would produce the following log entries.
 
 ## Log Levels
 
-Each of the log methods shown in the previous example specifies the log entry importance, or *level*. The `LogFile` class also has a `LogLevel` property. This allows you to easily filter out lower level log entries. If the log entry's level is not equal to or higher than the `LogFile`'s `LogLevel` property, the entry will not be written to the log file. If the `LogLevel` property of the `LogFile` class is set to `LogLevel.None`, no log entries will be written and logging is effectively disabled.
+Each of the log methods shown in the previous example specifies the log entry importance, or *level*. The `LogFile` class also has a `LogLevel` property. This allows you to easily filter out lower level log entries.
+
+If the log entry's level is not equal to or higher than the `LogFile`'s `LogLevel` property, the entry will not be written to the log file. If the `LogLevel` property of the `LogFile` class is set to `LogLevel.None`, no log entries will be written and logging is effectively disabled.
 
 ```cs
 logFile.LogLevel = LogLevel.Warning;
@@ -93,21 +96,21 @@ ex = new InvalidDataException("Unable to do this", ex);
 ex = new InvalidProgramException("There was a problem!", ex);
 
 // No inner exceptions logged here
-logFile.LogError("Text and an exception (not logging inner exceptions)", ex);
+logFile.LogError("Something went wrong", ex);
 
-// Now inner exceptions are logged
+// Now log inner exceptions
 logFile.LogInnerExceptions = true;
-logFile.LogError("Text and an exception (logging inner exceptions)", ex);
+logFile.LogError("Something went wrong", ex);
 ```
 
 The code above would produce the following log entries.
 
 ```
-[5/16/2020 6:38:50 PM][ERROR] Text and an exception (not logging inner exceptions) : System.InvalidProgramException: There was a problem!
-[5/16/2020 6:38:50 PM][ERROR] Text and an exception (logging inner exceptions) : System.InvalidProgramException: There was a problem!
-  --> [INNER EXCEPTION] System.IO.InvalidDataException: Unable to do this
-  --> [INNER EXCEPTION] System.InvalidOperationException: Unable to do that
-  --> [INNER EXCEPTION] System.ArgumentNullException: Value cannot be null. (Parameter 'parameterName')
+[5/16/2020 6:38:50 PM][ERROR] Something went wrong : InvalidProgramException: There was a problem!
+[5/16/2020 6:38:50 PM][ERROR] Something went wrong : InvalidProgramException: There was a problem!
+  --> [INNER EXCEPTION] InvalidDataException: Unable to do this
+  --> [INNER EXCEPTION] InvalidOperationException: Unable to do that
+  --> [INNER EXCEPTION] ArgumentNullException: Value cannot be null. (Parameter 'parameterName')
 ```
 
 ## Deleting the Log File
