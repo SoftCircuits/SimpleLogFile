@@ -12,6 +12,8 @@ Yet another log-file class for .NET. This one was designed to be dead simple to 
 
 Supports different entry levels, which can be filtered out or disabled altogether. Correctly formats Exceptions and can optionally include all inner exceptions. Virtual functions can be overridden to control entry formatting, where entries are written, and what the Delete method does.
 
+The library does not keep the log file open. It is opened each time a log entry needs to be written. This ensures that a crash would not exit the program without all log entries being flushed to disk. The class was also designed to work if the specified filename is `null`. In this case, logging is simply disabled.
+
 ## Using the Library
 
 To use the library, start by creating an instance of the `LogFile` class.
