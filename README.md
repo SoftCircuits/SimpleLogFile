@@ -36,7 +36,7 @@ The code above would produce the following log entries.
 
 ## Log Levels
 
-The `LogFile` class provides the `LogInfo()`, `LogWarning()`, `LogError()`, and `LogCritical()` methods for creating log entries. There are also format versions of each method.
+The `LogFile` class provides the `LogInfo()`, `LogWarning()`, `LogError()`, and `LogCritical()` methods for creating log entries. There is also a format version of each method.
 
 The method you choose determines the log entry importance, or *level*. The `LogLevel` property of the `LogFile` class can also be set. Only log entries with the same level or higher will be written to the log file. If the `LogLevel` property of the `LogFile` class is set to `LogLevel.None`, no log entries will be entered and logging is effectively disabled.
 
