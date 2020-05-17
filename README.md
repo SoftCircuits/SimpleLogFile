@@ -8,30 +8,46 @@ Install-Package SoftCircuits.SimpleLogFile
 
 ## Overview
 
-Yet another log-file class for .NET. This one was designed to be dead simple to use when needing to log entries to a file.
+Yet another log-file class for .NET. This one was designed to be dead simple to use when writing log entries to a file. (Although it can be extended to write entries elsewhere.)
 
-Supports different entry levels, which can be filtered out or disabled altogether. Correctly formats Exceptions and can optionally include all inner exceptions. Virtual functions can be overridden to control entry formatting, where entries are written, and what the Delete method does.
+The class supports different log entry levels, which can be filtered or disabled entirely. The library has special handling for formatting exceptions, and can optionally write all inner exceptions. Virtual functions can be overridden to control log entry formatting, where and how log entries are written, and what the `Delete()` method does.
 
-The library does not keep the log file open. It is opened each time a log entry needs to be written. This ensures that a crash would not exit the program without all log entries being flushed to disk. The class was also designed to work if the specified filename is `null`. In this case, logging is simply disabled.
+The library does not keep the log file open. The file is opened each time a log entry needs to be written and then immediately closed. This ensures that all log entries are flushed to disk even if the program crashes unexpectedly. The class was also designed not to raise any exceptions if the log filename is set to `null`. In this case, logging is simply disabled.
 
 ## Using the Library
 
-To use the library, start by creating an instance of the `LogFile` class.
+To use the library, start by creating an instance of the `LogFile` class. Then call any of the log methods to write a log entry.
 
 ```cs
 LogFile logFile = new LogFile(path);
 
 logFile.LogInfo("An information-level log entry");
-logFile.LogError("An error-level log entry", "There was an error");
-logFile.LogErrorFormat("There were {0} items", 25);
+logFile.LogWarning("A warning-level log entry");
+logFile.LogError("An error-level log entry");
+logFile.LogCritical("A critical-level log entry");
+
+logFile.LogDivider();
+
+Exception ex = new ArgumentNullException("parameterName");
+logFile.LogError("This parameter is required", ex);
+
+logFile.LogDivider();
+
+logFile.LogErrorFormat("Expected {0} items, but found {1} items", 25, 26);
 ```
 
 The code above would produce the following log entries.
 
 ```
-[5/16/2020 5:56:54 PM][INFO] An information-level log entry
-[5/16/2020 5:56:54 PM][ERROR] An error-level log entry : There was an error
-[5/16/2020 5:56:54 PM][ERROR] There were 25 items
+[5/16/2020 5:56:54 PM][INFO] An information-level log entry : 123
+[5/16/2020 5:56:54 PM][WARNING] A warning-level log entry : 123.4
+[5/16/2020 5:56:54 PM][ERROR] An error-level log entry
+[5/16/2020 5:56:54 PM][CRITICAL] A critical-level log entry
+-------------------------------------------------------------------------------
+[5/16/2020 5:56:54 PM][ERROR] This parameter is required : ArgumentNullException: Value cannot be null. (Parameter 'parameterName')
+-------------------------------------------------------------------------------
+[5/16/2020 5:56:54 PM][ERROR] Expected 25 items, but found 26 items
+
 ```
 
 ## Log Levels
