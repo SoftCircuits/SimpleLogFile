@@ -19,6 +19,9 @@ namespace LogFileTests
             string path = @"D:\Users\Jonathan\Desktop\LogFile.txt";
 
             LogFile logFile = new LogFile(path);
+
+            logFile.LogLevel = LogLevel.None;
+
             logFile.LogInfo("An information-level log entry");
             logFile.LogWarning("A warning-level log entry");
             logFile.LogError("An error-level log entry");

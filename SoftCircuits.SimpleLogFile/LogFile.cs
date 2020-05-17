@@ -18,20 +18,20 @@ namespace SoftCircuits.SimpleLogFile
 
         /// <summary>
         /// Gets or sets the name of the file that log entries will be written to. May be set
-        /// to <c>null</c>, which effectively disables logging. Note that derived classes can
-        /// also override where log entries are written.
+        /// to <c>null</c>, which will disable logging. Note that a derived class can
+        /// override where log entries are written.
         /// </summary>
         public string Filename { get; set; }
 
         /// <summary>
         /// Gets or sets which log entries are written to the log file. Only entries with the
-        /// specified level or higher will be written.
+        /// specified level or higher will be written to the log file.
         /// </summary>
         public LogLevel LogLevel { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the log methods that accept an <see cref="Exception"/> argument
-        /// also log all the inner exceptions. Otherwise, only the outer most exception is
+        /// Gets or sets whether the log methods that receive an <see cref="Exception"/> argument
+        /// will also log all the inner exceptions. Otherwise, only the outer most exception is
         /// logged.
         /// </summary>
         public bool LogInnerExceptions { get; set; }
@@ -40,24 +40,31 @@ namespace SoftCircuits.SimpleLogFile
         /// Gets or sets whether the full exception name is displayed when formatting exceptions.
         /// Otherwise, only the exception's class name is displayed (without the namespace).
         /// </summary>
-        public bool ShowExceptionClassFullName { get; set; }
+        public bool ShowFullExceptionClassName { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the <see cref="LogDivider(char)"/> works as expected. Set this
+        /// property to <c>false</c> to cause that method to have no effect.
+        /// </summary>
+        public bool DividersEnabled { get; set; }
 
         /// <summary>
         /// Constructs a new <see cref="LogFile"/> instance.
         /// </summary>
         /// <param name="filename">Name of the file log entries will be written to. May
-        /// be <c>null</c>, which effectively disables logging.</param>
+        /// be <c>null</c>, which disables logging.</param>
         /// <param name="logLevel">Determines which log entries are written to the log file.
         /// Log entries with the specified level or higher will be written.
         /// </param>
-        /// <param name="logInnerExceptions">Determins whether the log methods that accept
-        /// an <see cref="Exception"/> argument also log all the inner exceptions.</param>
+        /// <param name="logInnerExceptions">Determines whether the log methods that receive
+        /// an <see cref="Exception"/> argument will also log all the inner exceptions.</param>
         public LogFile(string filename, LogLevel logLevel = LogLevel.All, bool logInnerExceptions = false)
         {
             Filename = filename;
             LogLevel = logLevel;
             LogInnerExceptions = logInnerExceptions;
-            ShowExceptionClassFullName = false;
+            ShowFullExceptionClassName = false;
+            DividersEnabled = true;
         }
 
         /// <summary>
@@ -119,14 +126,17 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="args">Any number of values for this entry.</param>
         public void Log(LogLevel level, params object[] args)
         {
-            OnWrite(OnFormat(level, FormatItems(args, out Exception ex)));
-            if (LogInnerExceptions && ex != null)
+            if (level >= LogLevel)
             {
-                ex = ex.InnerException;
-                while (ex != null)
+                OnWrite(OnFormat(level, FormatItems(args, out Exception ex)));
+                if (LogInnerExceptions && ex != null)
                 {
-                    OnWrite(OnFormatSecondary(level, $"[INNER EXCEPTION] {FormatException(ex)}"));
                     ex = ex.InnerException;
+                    while (ex != null)
+                    {
+                        OnWrite(OnFormatSecondary(level, $"[INNER EXCEPTION] {FormatException(ex)}"));
+                        ex = ex.InnerException;
+                    }
                 }
             }
         }
@@ -139,14 +149,19 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="args">Any number of objects to format.</param>
         public void LogFormat(LogLevel level, string format, params object[] args)
         {
-            OnWrite(OnFormat(level, string.Format(format, args)));
+            if (level >= LogLevel)
+                OnWrite(OnFormat(level, string.Format(format, args)));
         }
 
         /// <summary>
         /// Writes a horizontal divider to help separate groups of log entries.
         /// </summary>
         /// <param name="lineCharacter">Specifies the character used to draw the line.</param>
-        public void LogDivider(char lineCharacter = '-') => OnWrite(new string(lineCharacter, 79));
+        public void LogDivider(char lineCharacter = '-')
+        {
+            if (LogLevel < LogLevel.None && DividersEnabled)
+                OnWrite(new string(lineCharacter, 79));
+        }
 
         /// <summary>
         /// Deletes the current log file.
@@ -158,6 +173,7 @@ namespace SoftCircuits.SimpleLogFile
         /// <summary>
         /// Overridable handler to format text before it is written to the log file.
         /// </summary>
+        /// <param name="level">Specifies the entry importance, or level.</param>
         /// <param name="text">Text to be written to the log file.</param>
         /// <returns>The formatted text.</returns>
         protected virtual string OnFormat(LogLevel level, string text)
@@ -168,6 +184,13 @@ namespace SoftCircuits.SimpleLogFile
                 text ?? NullString);
         }
 
+        /// <summary>
+        /// Overridable handler to format text for secondary log entries.
+        /// Currently, this only applies to inner exceptions.
+        /// </summary>
+        /// <param name="level">Specifies the entry importance, or level.</param>
+        /// <param name="text">Text to be written to the log file.</param>
+        /// <returns>The formatted text.</returns>
         protected virtual string OnFormatSecondary(LogLevel level, string text)
         {
             return string.Format("  --> {0}", text);
@@ -206,7 +229,7 @@ namespace SoftCircuits.SimpleLogFile
         /// </summary>
         /// <param name="items">Items to format.</param>
         /// <param name="exception">Returns a reference to the first item that
-        /// was an exception, or <c>null</c> if not items were an exception.</param>
+        /// was an exception, or <c>null</c> if no items were exceptions.</param>
         /// <returns>The formatted string.</returns>
         private string FormatItems(object[] items, out Exception exception)
         {
@@ -223,8 +246,7 @@ namespace SoftCircuits.SimpleLogFile
                     if (exception == null)
                         exception = ex;
                 }
-                else
-                    builder.Append(item.ToString());
+                else builder.Append(item.ToString());
             }
             return builder.ToString();
         }
@@ -239,7 +261,7 @@ namespace SoftCircuits.SimpleLogFile
             if (ex == null)
                 return NullException;
             Type type = ex.GetType();
-            string exceptionName = ShowExceptionClassFullName ? type.FullName : type.Name;
+            string exceptionName = ShowFullExceptionClassName ? type.FullName : type.Name;
             return $"{exceptionName}: {ex.Message}";
         }
 

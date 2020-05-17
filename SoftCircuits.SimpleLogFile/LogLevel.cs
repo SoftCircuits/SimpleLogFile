@@ -16,7 +16,7 @@ namespace SoftCircuits.SimpleLogFile
 
         /// <summary>
         /// Specifies that log entries with information level or higher are written to the log.
-        /// Same as <see cref="LogLevel.All"/>.
+        /// Same effect as using <see cref="LogLevel.All"/>.
         /// </summary>
         Info = 0,
 
