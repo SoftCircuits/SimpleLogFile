@@ -36,7 +36,7 @@ The code above would produce the following log entries.
 
 ## Log Levels
 
-The `LogFile` class provides the `LogInfo()`, `LogWarning()`, `LogError()`, and `LogCritical()` methods for creating log entries. There are also format versions of each method.
+The `LogFile` class provides the `LogInfo()`, `LogWarning()`, `LogError()`, and `LogCritical()` methods for creating log entries. There is also a format version of each method.
 
 The method you choose determines the log entry importance, or *level*. The `LogLevel` property of the `LogFile` class can also be set. Only log entries with the same level or higher will be written to the log file. If the `LogLevel` property of the `LogFile` class is set to `LogLevel.None`, no log entries will be entered and logging is effectively disabled.
 
@@ -104,18 +104,26 @@ This class was designed to be as straight forward and simple to use as possible.
 
 Each of these methods are documented below.
 
-#### protected virtual string OnFormat(LogLevel level, string text)
+```cs
+protected virtual string OnFormat(LogLevel level, string text);
+```
 
 This method formats the text before it gets written to the log file. Override this method to change the formatting.
 
-#### protected virtual string OnFormatSecondary(LogLevel level, string text)
+```cs
+protected virtual string OnFormatSecondary(LogLevel level, string text);
+```
 
 This method formats the text for a secondary log entry before it gets written to the log file. Currently, the only secondary log entries supported are for the inner exceptions when `LogInnerExceptions` is true. Override this method to change the formatting of secondary entries.
 
-#### protected virtual void OnWrite(string text)
+```cs
+protected virtual void OnWrite(string text);
+```
 
 This method performs the task of writing a formatted entry to the log file. You can override this method if you want to change the way the entry is written, or write it to another location.
 
-#### protected virtual void OnDelete()
+```cs
+protected virtual void OnDelete();
+```
 
 This method deletes the log file. Most likely, you will only need to override this method if you have also overridden `OnWrite()` and need to delete a different file or take other action.
