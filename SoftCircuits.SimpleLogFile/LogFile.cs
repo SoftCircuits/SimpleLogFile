@@ -9,14 +9,7 @@ using System.Text;
 namespace SoftCircuits.SimpleLogFile
 {
     /// <summary>
-    /// - Can log text, exceptions or both.
-    /// - Can optionally log all inner exceptions.
-    /// - Can override OnWrite() to customize where log entry is written to.
-    /// - Can override OnDelete() to customize action.
-    /// - Can override OnFormat() to change how entries are formatted.
-    /// - Several different levels of logging, can limit what levels of entries are
-    ///   logged, or disable logging entirely.
-    /// - Correctly handles log filename being null. Effectively disables logging.
+    /// Supports logging entries to a log file.
     /// </summary>
     public class LogFile
     {
@@ -140,6 +133,12 @@ namespace SoftCircuits.SimpleLogFile
         {
             OnWrite(OnFormat(level, string.Format(format, args)));
         }
+
+        /// <summary>
+        /// Writes a horizontal divider to help separate groups of log entries.
+        /// </summary>
+        /// <param name="lineCharacter">Specifies the character used to draw the line.</param>
+        public void LogDivider(char lineCharacter = '-') => OnWrite(new string(lineCharacter, 79));
 
         /// <summary>
         /// Deletes the current log file.

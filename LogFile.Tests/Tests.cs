@@ -15,7 +15,8 @@ namespace LogFileTests
         [TestMethod]
         public void Test()
         {
-            string path = @"D:\Users\Jonathan\Desktop\LogFile.txt"; // Path.GetTempFileName();
+            //string path = Path.GetTempFileName();
+            string path = @"D:\Users\Jonathan\Desktop\LogFile.txt";
 
             LogFile logFile = new LogFile(path);
             logFile.LogInfo("An information-level log entry");
@@ -23,10 +24,12 @@ namespace LogFileTests
             logFile.LogError("An error-level log entry");
             logFile.LogCritical("A critical-level log entry");
 
+            logFile.LogDivider();
+
             Exception ex = new ArgumentNullException("parameterName");
-            ex = new InvalidOperationException("Unable to do this", ex);
-            ex = new InvalidDataException("Unable to do that", ex);
-            ex = new InvalidProgramException("And don't even think about trying that!", ex);
+            ex = new InvalidOperationException("Unable to do that", ex);
+            ex = new InvalidDataException("Unable to do this", ex);
+            ex = new InvalidProgramException("There was a problem!", ex);
 
             logFile.LogError("Text and an exception (not logging inner exceptions)", ex);
 
@@ -34,12 +37,13 @@ namespace LogFileTests
             logFile.LogError("Text and an exception (logging inner exceptions)", ex);
             logFile.LogInnerExceptions = false;
 
+            logFile.LogDivider('=');
+
             logFile.LogInfo("I finished the first thing", "I did the second thing", "I breezed through the third thing", ex);
 
             logFile.LogFormat(LogLevel.Info, "Formatted log entry : {0}:{1}:{2}", 123, 456, 789);
 
             //File.Delete(path);
         }
-
     }
 }
