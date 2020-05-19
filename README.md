@@ -30,7 +30,7 @@ logFile.LogCritical("A critical-level log entry");
 // A divider helps separate groups of log entries
 logFile.LogDivider();
 
-// You can any number of objects
+// An entry can include any number of objects
 logFile.LogError("An error-level log entry", 12345, 'n', "Error");
 
 // The library has special handling for formatting exceptions. LogFile properties control
