@@ -14,12 +14,12 @@ namespace SoftCircuits.SimpleLogFile
     public class LogFile
     {
         private static readonly string NullString = "(null)";
-        private static readonly string NullException = "(null exception)";
+        private static readonly string NullExceptionString = "(null exception)";
 
         /// <summary>
-        /// Gets or sets the name of the file that log entries will be written to. May be set
-        /// to <c>null</c>, which will disable logging. Note that a derived class can
-        /// override where log entries are written.
+        /// Gets or sets the name of the file log entries are written to. May be set to <c>null</c>,
+        /// which disables logging. Note that a derived class can override where log entries are
+        /// written.
         /// </summary>
         public string Filename { get; set; }
 
@@ -31,30 +31,34 @@ namespace SoftCircuits.SimpleLogFile
 
         /// <summary>
         /// Gets or sets whether the log methods that receive an <see cref="Exception"/> argument
-        /// will also log all the inner exceptions. Otherwise, only the outer most exception is
-        /// logged.
+        /// will also log the inner exceptions. Otherwise, only the outer most exception is logged.
         /// </summary>
         public bool LogInnerExceptions { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the full exception name is displayed when formatting exceptions.
-        /// Otherwise, only the exception's class name is displayed (without the namespace).
+        /// Gets or sets whether the full exception class namespace is displayed when formatting
+        /// exceptions.
         /// </summary>
         public bool ShowFullExceptionClassName { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <see cref="LogDivider(char)"/> works as expected. Set this
-        /// property to <c>false</c> to cause that method to have no effect.
+        /// Gets or sets whether the <see cref="LogDivider(char)"/> is enabled. Set this property
+        /// to <c>false</c> and that method will have no effect.
         /// </summary>
         public bool DividersEnabled { get; set; }
 
         /// <summary>
+        /// Gets or sets the delimiter inserted between multiple log entry items.
+        /// </summary>
+        public string LogItemDelimiter { get; set; }
+
+        /// <summary>
         /// Constructs a new <see cref="LogFile"/> instance.
         /// </summary>
-        /// <param name="filename">Name of the file log entries will be written to. May
-        /// be <c>null</c>, which disables logging.</param>
+        /// <param name="filename">Name of the file log where entries will be written. May be
+        /// <c>null</c>, which disables logging.</param>
         /// <param name="logLevel">Determines which log entries are written to the log file.
-        /// Log entries with the specified level or higher will be written.
+        /// Only log entries with the specified level or higher will be written.
         /// </param>
         /// <param name="logInnerExceptions">Determines whether the log methods that receive
         /// an <see cref="Exception"/> argument will also log all the inner exceptions.</param>
@@ -65,6 +69,42 @@ namespace SoftCircuits.SimpleLogFile
             LogInnerExceptions = logInnerExceptions;
             ShowFullExceptionClassName = false;
             DividersEnabled = true;
+            LogItemDelimiter = " : ";
+        }
+
+        /// <summary>
+        /// Logs an entry.
+        /// </summary>
+        /// <param name="level">Specifies the entry importance, or level.</param>
+        /// <param name="args">Any number of values for this entry.</param>
+        public void Log(LogLevel level, params object[] args)
+        {
+            if (level >= LogLevel)
+            {
+                OnWrite(OnFormat(level, FormatItems(args, out Exception ex)));
+                // Log inner exceptions if specified and we found an exception
+                if (LogInnerExceptions && ex != null)
+                {
+                    ex = ex.InnerException;
+                    while (ex != null)
+                    {
+                        OnWrite(OnFormatSecondary(level, $"[INNER EXCEPTION] {OnFormatException(ex)}"));
+                        ex = ex.InnerException;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Logs a formatted entry.
+        /// </summary>
+        /// <param name="level">Specifies the entry importance, or level.</param>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="args">Any number of objects to format.</param>
+        public void LogFormat(LogLevel level, string format, params object[] args)
+        {
+            if (level >= LogLevel)
+                OnWrite(OnFormat(level, string.Format(format, args)));
         }
 
         /// <summary>
@@ -120,40 +160,6 @@ namespace SoftCircuits.SimpleLogFile
         public void LogCriticalFormat(string format, params object[] args) => LogFormat(LogLevel.Critical, format, args);
 
         /// <summary>
-        /// Logs an entry.
-        /// </summary>
-        /// <param name="level">Specifies the entry importance, or level.</param>
-        /// <param name="args">Any number of values for this entry.</param>
-        public void Log(LogLevel level, params object[] args)
-        {
-            if (level >= LogLevel)
-            {
-                OnWrite(OnFormat(level, FormatItems(args, out Exception ex)));
-                if (LogInnerExceptions && ex != null)
-                {
-                    ex = ex.InnerException;
-                    while (ex != null)
-                    {
-                        OnWrite(OnFormatSecondary(level, $"[INNER EXCEPTION] {FormatException(ex)}"));
-                        ex = ex.InnerException;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Logs a formatted entry.
-        /// </summary>
-        /// <param name="level">Specifies the entry importance, or level.</param>
-        /// <param name="format">A composite format string.</param>
-        /// <param name="args">Any number of objects to format.</param>
-        public void LogFormat(LogLevel level, string format, params object[] args)
-        {
-            if (level >= LogLevel)
-                OnWrite(OnFormat(level, string.Format(format, args)));
-        }
-
-        /// <summary>
         /// Writes a horizontal divider to help separate groups of log entries.
         /// </summary>
         /// <param name="lineCharacter">Specifies the character used to draw the line.</param>
@@ -186,7 +192,7 @@ namespace SoftCircuits.SimpleLogFile
 
         /// <summary>
         /// Overridable handler to format text for secondary log entries.
-        /// Currently, this only applies to inner exceptions.
+        /// Currently, this is only used for inner exceptions.
         /// </summary>
         /// <param name="level">Specifies the entry importance, or level.</param>
         /// <param name="text">Text to be written to the log file.</param>
@@ -194,6 +200,20 @@ namespace SoftCircuits.SimpleLogFile
         protected virtual string OnFormatSecondary(LogLevel level, string text)
         {
             return string.Format("  --> {0}", text);
+        }
+
+        /// <summary>
+        /// Overridable handler to format an exception.
+        /// </summary>
+        /// <param name="ex">The exception to format.</param>
+        /// <returns>The formatted exception.</returns>
+        protected virtual string OnFormatException(Exception ex)
+        {
+            if (ex == null)
+                return NullExceptionString;
+            Type type = ex.GetType();
+            string exceptionName = ShowFullExceptionClassName ? type.FullName : type.Name;
+            return $"{exceptionName}: {ex.Message}";
         }
 
         /// <summary>
@@ -228,41 +248,31 @@ namespace SoftCircuits.SimpleLogFile
         /// Formats a collection of items into a single string.
         /// </summary>
         /// <param name="items">Items to format.</param>
-        /// <param name="exception">Returns a reference to the first item that
+        /// <param name="ex">Returns a reference to the first item that
         /// was an exception, or <c>null</c> if no items were exceptions.</param>
         /// <returns>The formatted string.</returns>
-        private string FormatItems(object[] items, out Exception exception)
+        private string FormatItems(object[] items, out Exception ex)
         {
-            exception = null;
+            ex = null;
 
             StringBuilder builder = new StringBuilder();
             foreach (object item in items)
             {
                 if (builder.Length > 0)
-                    builder.Append(" : ");
-                if (item is Exception ex)
+                    builder.Append(LogItemDelimiter ?? string.Empty);
+                if (item == null)
                 {
-                    builder.AppendFormat(FormatException(ex));
-                    if (exception == null)
-                        exception = ex;
+                    builder.Append(NullString);
+                }
+                else if (item is Exception exception)
+                {
+                    builder.Append(OnFormatException(exception));
+                    if (ex == null)
+                        ex = exception;
                 }
                 else builder.Append(item.ToString());
             }
             return builder.ToString();
-        }
-
-        /// <summary>
-        /// Formats an exception.
-        /// </summary>
-        /// <param name="ex">The exception to format.</param>
-        /// <returns>The formatted exception.</returns>
-        private string FormatException(Exception ex)
-        {
-            if (ex == null)
-                return NullException;
-            Type type = ex.GetType();
-            string exceptionName = ShowFullExceptionClassName ? type.FullName : type.Name;
-            return $"{exceptionName}: {ex.Message}";
         }
 
         #endregion
