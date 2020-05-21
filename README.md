@@ -140,6 +140,12 @@ protected virtual string OnFormatSecondary(LogLevel level, string text);
 This method formats the text for a secondary log entry before it gets written to the log file. Currently, the only secondary log entries supported are for the inner exceptions when `LogInnerExceptions` is true. Override this method to change the formatting of secondary entries.
 
 ```cs
+protected virtual string OnFormatException(Exception ex);
+```
+
+This method formats an exception that is part of a log entry. Note that when logging inner exceptions, this method will be called for each inner exception. And so it should normally format only the top-level exception.
+
+```cs
 protected virtual void OnWrite(string text);
 ```
 
