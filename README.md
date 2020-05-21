@@ -30,7 +30,7 @@ logFile.LogCritical("A critical-level log entry");
 // A divider helps separate groups of log entries
 logFile.LogDivider();
 
-// You can any number of objects
+// An entry can include any number of objects
 logFile.LogError("An error-level log entry", 12345, 'n', "Error");
 
 // The library has special handling for formatting exceptions. LogFile properties control
@@ -138,6 +138,12 @@ protected virtual string OnFormatSecondary(LogLevel level, string text);
 ```
 
 This method formats the text for a secondary log entry before it gets written to the log file. Currently, the only secondary log entries supported are for the inner exceptions when `LogInnerExceptions` is true. Override this method to change the formatting of secondary entries.
+
+```cs
+protected virtual string OnFormatException(Exception ex);
+```
+
+This method formats an exception that is part of a log entry. Note that when logging inner exceptions, this method will be called for each inner exception. And so it should normally format only the top-level exception.
 
 ```cs
 protected virtual void OnWrite(string text);
