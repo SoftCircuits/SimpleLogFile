@@ -20,7 +20,7 @@ namespace LogFileTests
 
             LogFile logFile = new LogFile(path);
 
-            logFile.LogLevel = LogLevel.None;
+            //logFile.LogLevel = LogLevel.None;
 
             logFile.LogInfo("An information-level log entry");
             logFile.LogWarning("A warning-level log entry");

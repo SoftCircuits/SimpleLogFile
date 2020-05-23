@@ -172,23 +172,22 @@ namespace SoftCircuits.SimpleLogFile
         public void LogCriticalFormat(string format, params object[] args) => LogFormat(LogLevel.Critical, format, args);
 
         /// <summary>
-        /// Writes a horizontal divider to visually separate groups of log entries.
+        /// Writes a horizontal divider to the log file to visually separate groups of
+        /// log entries. The divider is drawn using the character specified by the
+        /// <see cref="DividerChar"/> property.
         /// </summary>
-        public void LogDivider()
-        {
-            if (LogLevel < LogLevel.None && DividersEnabled)
-                OnWrite(new string(DividerChar, 79));
-        }
+        public void LogDivider() => LogDivider(DividerChar);
 
         /// <summary>
-        /// Writes a horizontal divider to visually separate groups of log entries.
+        /// Writes a horizontal divider to the log file to visually separate groups of
+        /// log entries. The divider is drawn using the character specified by
+        /// <paramref name="dividerChar"/>.
         /// </summary>
-        /// <param name="dividerCharacter">Specifies the character used to draw the divider.</param>
-        [Obsolete("This method is deprecated and will be removed in a future version. Please use LogDivider() instead and use the DividerChar property to change the character used.")]
-        public void LogDivider(char dividerCharacter = '-')
+        /// <param name="dividerChar">Specifies the character used to draw the divider.</param>
+        public void LogDivider(char dividerChar)
         {
-            DividerChar = dividerCharacter;
-            LogDivider();
+            if (LogLevel < LogLevel.None && DividersEnabled)
+                OnWrite(new string(dividerChar, 79));
         }
 
         /// <summary>
