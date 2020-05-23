@@ -40,7 +40,7 @@ namespace LogFileTests
             logFile.LogError("Text and an exception (logging inner exceptions)", ex);
             logFile.LogInnerExceptions = false;
 
-            logFile.LogDivider('=');
+            logFile.LogDivider();
 
             logFile.LogInfo("I finished the first thing", "I did the second thing", "I breezed through the third thing", ex);
 

@@ -13,25 +13,31 @@ namespace SoftCircuits.SimpleLogFile
     /// </summary>
     public class LogFile
     {
-        private static readonly string NullString = "(null)";
-        private static readonly string NullExceptionString = "(null exception)";
+        private const bool DefaultShowFullExceptionClassName = false;
+        private const bool DefaultDividersEnabled = true;
+        private const string DefaultLogItemDelimiter = " : ";
+        private const char DefaultDividerChar = '-';
+
+        private const string NullString = "(null)";
+        private const string NullExceptionString = "(null exception)";
 
         /// <summary>
-        /// Gets or sets the name of the file log entries are written to. May be set to <c>null</c>,
-        /// which disables logging. Note that a derived class can override where log entries are
-        /// written.
+        /// Gets or sets the name of the file that log entries are written to. May be set to
+        /// <c>null</c>, which disables logging. Note that a derived class can override
+        /// how and where log entries are written.
         /// </summary>
         public string Filename { get; set; }
 
         /// <summary>
         /// Gets or sets which log entries are written to the log file. Only entries with the
-        /// specified level or higher will be written to the log file.
+        /// specified level or higher will be written.
         /// </summary>
         public LogLevel LogLevel { get; set; }
 
         /// <summary>
         /// Gets or sets whether the log methods that receive an <see cref="Exception"/> argument
-        /// will also log the inner exceptions. Otherwise, only the outer most exception is logged.
+        /// will also log the exception's inner exceptions. When <c>false</c>, only the outer
+        /// most exception is logged.
         /// </summary>
         public bool LogInnerExceptions { get; set; }
 
@@ -42,8 +48,8 @@ namespace SoftCircuits.SimpleLogFile
         public bool ShowFullExceptionClassName { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the <see cref="LogDivider(char)"/> is enabled. Set this property
-        /// to <c>false</c> and that method will have no effect.
+        /// Gets or sets whether the <see cref="LogDivider(char)"/> method is enabled. Setting
+        /// this property to <c>false</c> will cause that method to have no effect.
         /// </summary>
         public bool DividersEnabled { get; set; }
 
@@ -51,6 +57,11 @@ namespace SoftCircuits.SimpleLogFile
         /// Gets or sets the delimiter inserted between multiple log entry items.
         /// </summary>
         public string LogItemDelimiter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the character used by the <see cref="LogDivider"/> method.
+        /// </summary>
+        public char DividerChar { get; set; }
 
         /// <summary>
         /// Constructs a new <see cref="LogFile"/> instance.
@@ -67,9 +78,10 @@ namespace SoftCircuits.SimpleLogFile
             Filename = filename;
             LogLevel = logLevel;
             LogInnerExceptions = logInnerExceptions;
-            ShowFullExceptionClassName = false;
-            DividersEnabled = true;
-            LogItemDelimiter = " : ";
+            ShowFullExceptionClassName = DefaultShowFullExceptionClassName;
+            DividersEnabled = DefaultDividersEnabled;
+            LogItemDelimiter = DefaultLogItemDelimiter;
+            DividerChar = DefaultDividerChar;
         }
 
         /// <summary>
@@ -160,13 +172,23 @@ namespace SoftCircuits.SimpleLogFile
         public void LogCriticalFormat(string format, params object[] args) => LogFormat(LogLevel.Critical, format, args);
 
         /// <summary>
-        /// Writes a horizontal divider to help separate groups of log entries.
+        /// Writes a horizontal divider to visually separate groups of log entries.
         /// </summary>
-        /// <param name="lineCharacter">Specifies the character used to draw the line.</param>
-        public void LogDivider(char lineCharacter = '-')
+        public void LogDivider()
         {
             if (LogLevel < LogLevel.None && DividersEnabled)
-                OnWrite(new string(lineCharacter, 79));
+                OnWrite(new string(DividerChar, 79));
+        }
+
+        /// <summary>
+        /// Writes a horizontal divider to visually separate groups of log entries.
+        /// </summary>
+        /// <param name="dividerCharacter">Specifies the character used to draw the divider.</param>
+        [Obsolete("This method is deprecated and will be removed in a future version. Please use LogDivider() instead and use the DividerChar property to change the character used.")]
+        public void LogDivider(char dividerCharacter = '-')
+        {
+            DividerChar = dividerCharacter;
+            LogDivider();
         }
 
         /// <summary>
