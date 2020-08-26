@@ -16,7 +16,7 @@ namespace LogFileTests
         public void Test()
         {
             //string path = Path.GetTempFileName();
-            string path = @"D:\Users\Jonathan\Desktop\LogFile.txt";
+            string path = @"D:\Users\jwood\Desktop\LogFile.txt";
 
             LogFile logFile = new LogFile(path);
 

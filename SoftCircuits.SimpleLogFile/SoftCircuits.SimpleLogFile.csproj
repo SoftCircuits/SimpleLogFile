@@ -9,14 +9,14 @@
     <Description>Yet another log-file class for .NET. This one was designed to be dead simple to use when needing to log entries to a file. Supports different entry levels, which can be filtered out or disabled altogether. Correctly formats Exceptions and can optionally include all inner exceptions. Virtual functions can be overridden to control entry formatting, where entries are written, and what the Delete method does.</Description>
     <Copyright>Copyright © 2020 SoftCircuits</Copyright>
     <PackageTags>log file log-file logger text-file-logger</PackageTags>
-    <PackageReleaseNotes>Changed LogDivider() configuration: There are now two overloads, one uses the character set by the DividerChar property, the other uses the character passed to the method.</PackageReleaseNotes>
+    <PackageReleaseNotes>Changed formatting of secondary entries, but made secondary prefix a new property; Other minor enhancements and optimizations.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/SoftCircuits/SimpleLogFile</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SoftCircuits/SimpleLogFile</PackageProjectUrl>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
   </PropertyGroup>
 
   <ItemGroup>

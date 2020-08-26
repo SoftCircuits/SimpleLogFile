@@ -5,7 +5,7 @@
 namespace SoftCircuits.SimpleLogFile
 {
     /// <summary>
-    /// Specifies the importance, or level, of a log entry.
+    /// Specifies the type, or level, of a log entry.
     /// </summary>
     public enum LogLevel
     {

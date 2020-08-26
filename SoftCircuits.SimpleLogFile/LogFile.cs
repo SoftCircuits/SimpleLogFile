@@ -16,14 +16,15 @@ namespace SoftCircuits.SimpleLogFile
         private const bool DefaultShowFullExceptionClassName = false;
         private const bool DefaultDividersEnabled = true;
         private const string DefaultLogItemDelimiter = " : ";
+        private const string DefaultSecondaryPrefix = " : ";
         private const char DefaultDividerChar = '-';
 
         private const string NullString = "(null)";
         private const string NullExceptionString = "(null exception)";
 
         /// <summary>
-        /// Gets or sets the name of the file that log entries are written to. May be set to
-        /// <c>null</c>, which disables logging. Note that a derived class can override
+        /// Gets or sets the name of the file that log entries are written to. Setting this
+        /// property to <c>null</c> disables logging. Note that a derived class can override
         /// how and where log entries are written.
         /// </summary>
         public string Filename { get; set; }
@@ -36,8 +37,8 @@ namespace SoftCircuits.SimpleLogFile
 
         /// <summary>
         /// Gets or sets whether the log methods that receive an <see cref="Exception"/> argument
-        /// will also log the exception's inner exceptions. When <c>false</c>, only the outer
-        /// most exception is logged.
+        /// will also log the exception's inner exceptions. When <c>false</c>, only the outer-most
+        /// exception is logged.
         /// </summary>
         public bool LogInnerExceptions { get; set; }
 
@@ -54,9 +55,16 @@ namespace SoftCircuits.SimpleLogFile
         public bool DividersEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the delimiter inserted between multiple log entry items.
+        /// Gets or sets the delimiter inserted between multiple log-entry items.
         /// </summary>
         public string LogItemDelimiter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the prefix for secondary entries. Secondary entries are part of a log
+        /// entry that appear on a new line. Currently, the only secondary entries are when
+        /// logging an exception and <see cref="LogInnerExceptions"/> is <c>true</c>.
+        /// </summary>
+        public string SecondaryPrefix { get; set; }
 
         /// <summary>
         /// Gets or sets the character used by the <see cref="LogDivider"/> method.
@@ -66,8 +74,8 @@ namespace SoftCircuits.SimpleLogFile
         /// <summary>
         /// Constructs a new <see cref="LogFile"/> instance.
         /// </summary>
-        /// <param name="filename">Name of the file log where entries will be written. May be
-        /// <c>null</c>, which disables logging.</param>
+        /// <param name="filename">Name of the file log where entries will be written. Set to
+        /// <c>null</c> to disables logging.</param>
         /// <param name="logLevel">Determines which log entries are written to the log file.
         /// Only log entries with the specified level or higher will be written.
         /// </param>
@@ -81,6 +89,7 @@ namespace SoftCircuits.SimpleLogFile
             ShowFullExceptionClassName = DefaultShowFullExceptionClassName;
             DividersEnabled = DefaultDividersEnabled;
             LogItemDelimiter = DefaultLogItemDelimiter;
+            SecondaryPrefix = DefaultSecondaryPrefix;
             DividerChar = DefaultDividerChar;
         }
 
@@ -97,11 +106,10 @@ namespace SoftCircuits.SimpleLogFile
                 // Log inner exceptions if specified and we found an exception
                 if (LogInnerExceptions && ex != null)
                 {
-                    ex = ex.InnerException;
-                    while (ex != null)
+                    while (ex.InnerException != null)
                     {
-                        OnWrite(OnFormatSecondary(level, $"[INNER EXCEPTION] {OnFormatException(ex)}"));
                         ex = ex.InnerException;
+                        OnWrite(OnFormatSecondary(level, $"[INNER EXCEPTION] {OnFormatException(ex)}"));
                     }
                 }
             }
@@ -186,7 +194,7 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="dividerChar">Specifies the character used to draw the divider.</param>
         public void LogDivider(char dividerChar)
         {
-            if (LogLevel < LogLevel.None && DividersEnabled)
+            if (LogLevel != LogLevel.None && DividersEnabled)
                 OnWrite(new string(dividerChar, 79));
         }
 
@@ -220,11 +228,11 @@ namespace SoftCircuits.SimpleLogFile
         /// <returns>The formatted text.</returns>
         protected virtual string OnFormatSecondary(LogLevel level, string text)
         {
-            return string.Format("  --> {0}", text);
+            return string.Format("{0}{1}", DefaultLogItemDelimiter, text);
         }
 
         /// <summary>
-        /// Overridable handler to format an exception.
+        /// Overridable handler to format an exception. Does not include inner exceptions.
         /// </summary>
         /// <param name="ex">The exception to format.</param>
         /// <returns>The formatted exception.</returns>
@@ -233,8 +241,7 @@ namespace SoftCircuits.SimpleLogFile
             if (ex == null)
                 return NullExceptionString;
             Type type = ex.GetType();
-            string exceptionName = ShowFullExceptionClassName ? type.FullName : type.Name;
-            return $"{exceptionName}: {ex.Message}";
+            return string.Format("{0}: {1}", ShowFullExceptionClassName ? type.FullName : type.Name, ex.Message);
         }
 
         /// <summary>
@@ -258,7 +265,13 @@ namespace SoftCircuits.SimpleLogFile
         protected virtual void OnDelete()
         {
             if (!string.IsNullOrEmpty(Filename))
-                File.Delete(Filename);
+            {
+                try
+                {
+                    File.Delete(Filename);
+                }
+                catch (Exception) { }
+            }
         }
 
         #endregion
