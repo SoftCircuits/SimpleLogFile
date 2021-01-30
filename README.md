@@ -1,5 +1,3 @@
-<a href="https://www.buymeacoffee.com/jonathanwood" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/black_img.png" alt="Buy Me A Coffee" style="height: 37px !important;width: 170px !important;" ></a>
-
 # SimpleLogFile
 
 [![NuGet version (SoftCircuits.SimpleLogFile)](https://img.shields.io/nuget/v/SoftCircuits.SimpleLogFile.svg?style=flat-square)](https://www.nuget.org/packages/SoftCircuits.SimpleLogFile/)
