@@ -108,9 +108,9 @@ The code above would produce the following log entries.
 ```
 [5/16/2020 6:38:50 PM][ERROR] Something went wrong : InvalidProgramException: There was a problem!
 [5/16/2020 6:38:50 PM][ERROR] Something went wrong : InvalidProgramException: There was a problem!
-  --> [INNER EXCEPTION] InvalidDataException: Unable to do this
-  --> [INNER EXCEPTION] InvalidOperationException: Unable to do that
-  --> [INNER EXCEPTION] ArgumentNullException: Value cannot be null. (Parameter 'parameterName')
+ : [INNER EXCEPTION] InvalidDataException: Unable to do this
+ : [INNER EXCEPTION] InvalidOperationException: Unable to do that
+ : [INNER EXCEPTION] ArgumentNullException: Value cannot be null. (Parameter 'parameterName')
 ```
 
 ## Deleting the Log File
