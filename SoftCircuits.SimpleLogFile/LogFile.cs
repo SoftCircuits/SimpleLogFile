@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2020-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -285,7 +285,7 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="ex">Returns a reference to the first item that
         /// was an exception, or <c>null</c> if no items were exceptions.</param>
         /// <returns>The formatted string.</returns>
-        private string FormatItems(object[] items, out Exception ex)
+        private string FormatItems(object[] items, out Exception? ex)
         {
             ex = null;
 
