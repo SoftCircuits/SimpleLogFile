@@ -23,6 +23,15 @@ namespace SoftCircuits.SimpleLogFile
         private const string NullExceptionString = "(null exception)";
 
         /// <summary>
+        /// Event raised when a line is logged.
+        /// </summary>
+        /// <remarks>
+        /// Note: If you override the <see cref="OnWrite(string)"/> method, this event will not be fired
+        /// unless you call the base method or raise the event in your own code.
+        /// </remarks>
+        public event EventHandler<LineLoggedEventArgs>? LineLogged;
+
+        /// <summary>
         /// Gets or sets the name of the file that log entries are written to. Setting this
         /// property to <c>null</c> disables logging. Note that a derived class can override
         /// how and where log entries are written.
@@ -102,7 +111,7 @@ namespace SoftCircuits.SimpleLogFile
         {
             if (level >= LogLevel)
             {
-                OnWrite(OnFormat(level, FormatItems(args, out Exception ex)));
+                OnWrite(OnFormat(level, FormatItems(args, out Exception? ex)));
                 // Log inner exceptions if specified and we found an exception
                 if (LogInnerExceptions && ex != null)
                 {
@@ -252,11 +261,11 @@ namespace SoftCircuits.SimpleLogFile
         {
             if (!string.IsNullOrEmpty(Filename))
             {
-                using (StreamWriter writer = File.AppendText(Filename))
-                {
-                    writer.WriteLine(text ?? NullString);
-                }
+                using StreamWriter writer = File.AppendText(Filename);
+                writer.WriteLine(text ?? NullString);
             }
+
+            LineLogged?.Invoke(this, new(text ?? NullString));
         }
 
         /// <summary>
@@ -289,7 +298,7 @@ namespace SoftCircuits.SimpleLogFile
         {
             ex = null;
 
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
             foreach (object item in items)
             {
                 if (builder.Length > 0)

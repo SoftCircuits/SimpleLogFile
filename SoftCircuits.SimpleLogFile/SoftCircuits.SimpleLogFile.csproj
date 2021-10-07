@@ -14,14 +14,14 @@
 Now targeting .NET Standard 2.0 or .NET 5.0, and supports nullable reference types.</Description>
     <Copyright>Copyright © 2020-2021 SoftCircuits</Copyright>
     <PackageTags>log file log-file logger text-file-logger</PackageTags>
-    <PackageReleaseNotes>Now targeting .NET Standard 2.0 or .NET 5.0, and supports nullable reference types.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added LineLogged event.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/SoftCircuits/SimpleLogFile</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SoftCircuits/SimpleLogFile</PackageProjectUrl>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
