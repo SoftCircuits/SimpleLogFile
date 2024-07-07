@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Jonathan Wood (www.softcircuits.com)
+// Copyright (c) 2020-2024 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -16,9 +16,10 @@ namespace LogFileTests
         public void Test()
         {
             //string path = Path.GetTempFileName();
-            string path = @"D:\Users\jwood\Desktop\LogFile.txt";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            path = Path.Combine(path, "LogFile.txt");
 
-            LogFile logFile = new LogFile(path);
+            LogFile logFile = new(path);
 
             //logFile.LogLevel = LogLevel.None;
 

@@ -1,27 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.0</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>annotations</Nullable>
-    <Nullable Condition="'$(TargetFramework)' == 'net5.0'">enable</Nullable>
-    <LangVersion>9.0</LangVersion>
+    <Nullable Condition="'$(TargetFramework)' != 'netstandard2.0'">enable</Nullable>
+    <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Jonathan Wood</Authors>
     <Company>SoftCircuits</Company>
-    <Description>Yet another log-file class for .NET. This one was designed to be dead simple to use when needing to log entries to a file. Supports different entry levels, which can be filtered out or disabled altogether. Correctly formats Exceptions and can optionally include all inner exceptions. Virtual functions can be overridden to control entry formatting, where entries are written, and what the Delete method does.
-
-Now targeting .NET Standard 2.0 or .NET 5.0, and supports nullable reference types.</Description>
-    <Copyright>Copyright © 2020-2021 SoftCircuits</Copyright>
+    <Description>Yet another log-file class for .NET. This one was designed to be dead simple to use when needing to log entries to a file. Supports different entry levels, which can be filtered out or disabled altogether. Correctly formats Exceptions and can optionally include all inner exceptions. Virtual functions can be overridden to control entry formatting, where entries are written, and what the Delete method does.</Description>
+    <Copyright>Copyright © 2020-2024 SoftCircuits</Copyright>
     <PackageTags>log file log-file logger text-file-logger</PackageTags>
-    <PackageReleaseNotes>Added LineLogged event.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added direct support for .NET 7 and .NET 8; Minor fixes and enhancements.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/SoftCircuits/SimpleLogFile</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SoftCircuits/SimpleLogFile</PackageProjectUrl>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +32,10 @@ Now targeting .NET Standard 2.0 or .NET 5.0, and supports nullable reference typ
     <None Include="..\Logo_64x64.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

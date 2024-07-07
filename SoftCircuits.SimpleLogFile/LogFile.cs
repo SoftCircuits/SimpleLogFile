@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020-2021 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2020-2024 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -76,7 +76,7 @@ namespace SoftCircuits.SimpleLogFile
         public string SecondaryPrefix { get; set; }
 
         /// <summary>
-        /// Gets or sets the character used by the <see cref="LogDivider"/> method.
+        /// Gets or sets the character used by the <see cref="LogFile.LogDivider()"/> method.
         /// </summary>
         public char DividerChar { get; set; }
 
@@ -310,8 +310,7 @@ namespace SoftCircuits.SimpleLogFile
                 else if (item is Exception exception)
                 {
                     builder.Append(OnFormatException(exception));
-                    if (ex == null)
-                        ex = exception;
+                    ex ??= exception;
                 }
                 else builder.Append(item.ToString());
             }
