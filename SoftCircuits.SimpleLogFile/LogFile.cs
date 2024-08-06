@@ -40,7 +40,7 @@ namespace SoftCircuits.SimpleLogFile
 
         /// <summary>
         /// Gets or sets which log entries are written to the log file. Only entries with the
-        /// specified level or higher will be written.
+        /// specified level or lower will be written.
         /// </summary>
         public LogLevel LogLevel { get; set; }
 
@@ -86,7 +86,7 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="filename">Name of the file log where entries will be written. Set to
         /// <c>null</c> to disables logging.</param>
         /// <param name="logLevel">Determines which log entries are written to the log file.
-        /// Only log entries with the specified level or higher will be written.
+        /// Only log entries with the specified level or lower will be written.
         /// </param>
         /// <param name="logInnerExceptions">Determines whether the log methods that receive
         /// an <see cref="Exception"/> argument will also log all the inner exceptions.</param>
@@ -109,7 +109,7 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="args">Any number of values for this entry.</param>
         public void Log(LogLevel level, params object[] args)
         {
-            if (level >= LogLevel)
+            if (level <= LogLevel)
             {
                 OnWrite(OnFormat(level, FormatItems(args, out Exception? ex)));
                 // Log inner exceptions if specified and we found an exception
@@ -132,7 +132,7 @@ namespace SoftCircuits.SimpleLogFile
         /// <param name="args">Any number of objects to format.</param>
         public void LogFormat(LogLevel level, string format, params object[] args)
         {
-            if (level >= LogLevel)
+            if (level <= LogLevel)
                 OnWrite(OnFormat(level, string.Format(format, args)));
         }
 
